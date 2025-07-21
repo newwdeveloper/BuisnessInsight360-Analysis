@@ -1,9 +1,12 @@
 📊 Power BI – Building the Financial View (P&L)
-🔧 Objective:
-To build a Profit & Loss (P&L) style matrix in Power BI where financial KPIs such as Gross Sales, Pre-Invoice Deduction, and Net Invoice Sales are aligned vertically like a statement, using DAX and matrix visuals.
+🔧 Objective
+To build a Profit & Loss (P&L) style financial matrix in Power BI, where key financial metrics like Gross Sales, Pre-Invoice Deduction, and Net Invoice Sales are arranged vertically like a financial statement — using a supporting table, DAX logic, and matrix visuals.
 
-🧱 Step 1: Create a Supporting Table for P&L Rows
-To design the layout, I created a new table manually named P&L rows that defines the label and order of each line item to appear in the matrix.
+🧱 Step 1: Create the Core P&L Structure
+This step involves preparing the base structure that will support the dynamic P&L view.
+
+🧾 1.1 Create Supporting Table for P&L Rows
+Manually create a new table named P&L rows using DATATABLE to define each line item and its order:
 
 DAX
 Copy
@@ -17,10 +20,10 @@ P&L rows = DATATABLE(
         {"Net Invoice Sales", 3}
     }
 )
-This table helps in vertically aligning our KPIs in a desired order using a matrix visual.
+This table acts as a layout blueprint for your P&L view, keeping the KPIs ordered and aligned vertically.
 
-🧮 Step 2: Create the P&L Measure Using SWITCH
-Then I created a dynamic measure that shows the correct value depending on the selected row using the SWITCH(TRUE()) logic. Here's the measure I used:
+🧮 1.2 Create the Dynamic P&L Measure
+Next, create a DAX measure named P&L values to return different financial values based on the selected row using SWITCH(TRUE()).
 
 DAX
 Copy
@@ -32,29 +35,33 @@ SWITCH(
     MAX('P&L rows'[Order]) = 2, [Pre_Invoice_Deduction ₹],
     MAX('P&L rows'[Order]) = 3, [NIS ₹]
 )
-This measure pulls values for:
+This measure dynamically pulls:
 
-Gross Sales (GS ₹)
+Gross Sales → [GS ₹]
 
-Pre-Invoice Deduction (₹)
+Pre-Invoice Deduction → [Pre_Invoice_Deduction ₹]
 
-Net Invoice Sales (₹)
-…based on the selected row from the P&L rows table.
+Net Invoice Sales → [NIS ₹]
 
-🎨 Step 3: Build the Matrix Visual
-Rows: Drag the P&L rows[P&L Item]
+🎨 1.3 Build the Matrix Visual
+Use Power BI’s matrix visual to create the final view:
 
-Values: Use the [P&L values] measure
+Rows: P&L rows[P&L Item]
 
-Sort Order: Sort by Order column from the P&L rows table to ensure correct sequence
+Values: P&L values measure
 
-Styling: Cleaned headers, adjusted formatting to show ₹ values neatly
+Sort: Sort by Order column to maintain line order
 
-📸 Snapshot:
+Styling:
+
+Hide column headers
+
+Format values as currency (₹)
+
+Remove subtotals for cleaner layout
+
+📸 Snapshot
+
+![finance view](https://github.com/user-attachments/assets/6577eb22-de88-46aa-b362-8fba1ab61eca)
 
 
-![finance view](https://github.com/user-attachments/assets/f335a110-45e6-4c76-856c-700041dd81e8)
-
-
-📝 Summary
-This approach helped me build a structured and readable P&L-style dashboard, which can be easily extended to add more financial metrics or subtotals in future. This setup keeps my model modular and my DAX logic centralized.
