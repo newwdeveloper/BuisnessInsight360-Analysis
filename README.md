@@ -152,8 +152,71 @@ Edit
 2024  
 2025 Est  
 
+
+
 📸 Snapshot
 ![p1](https://github.com/user-attachments/assets/996af952-fe17-489f-9089-54e5117a9e46)
+
+
+✅ Step 3 – Creating YoY Metrics and Dynamic Column Header Table for Final P&L Output
+To enhance flexibility and visibility into year-over-year (YoY) performance, we extended our model by introducing YoY measures and a dynamic table for visual structuring. Here's the breakdown:
+
+🔹 1. YoY and YoY% Change Measures
+We first calculated the YoY change in profit and loss values using simple DAX measures:
+
+DAX
+Copy
+Edit
+P&L YoY Chg = [P&L values] - [P&L LY]
+Then, we derived the YoY percentage change, with a safe divide to avoid divide-by-zero errors:
+
+DAX
+Copy
+Edit
+P&L YoY % chg = DIVIDE([P&L YoY Chg], [P&L LY], 0) * 100
+These measures help compare current fiscal year values against the previous year in both absolute and percentage terms.
+
+🔹 2. Dynamic Column Header Table (P&L Columns)
+To organize these different perspectives (LY, YoY, YoY%) along with fiscal years, we created a new calculated table to serve as a column header source in matrix visuals:
+
+DAX
+Copy
+Edit
+P&L Columns =
+VAR x = ALLNOBLANKROW('Actual_fiscal-year'[fiscal_year])
+RETURN
+UNION(
+    ROW("Col Header", "LY"),
+    ROW("Col Header", "YoY"),
+    ROW("Col Header", "YoY %"),
+    x
+)
+This allows the matrix visual to dynamically display LY, YoY, and YoY% columns alongside the actual fiscal years.
+
+🔹 3. Unified Measure for Matrix Output
+We then created a final measure to control which value appears under which column, based on the selected column header context:
+
+DAX
+Copy
+Edit
+P&L final value =
+SWITCH(
+    TRUE(),
+    SELECTEDVALUE('Actual_fiscal-year'[fy_desc]) = MAX('P&L Columns'[Col Header]), [P&L values],
+    MAX('P&L Columns'[Col Header]) = "LY", [P&L LY],
+    MAX('P&L Columns'[Col Header]) = "YoY", [P&L YoY Chg],
+    MAX('P&L Columns'[Col Header]) = "YoY %", [P&L YoY % chg]
+)
+💡 Why This Approach?
+📊 More control: By combining actual fiscal years and derived metrics like LY and YoY into a single column header, this method enables more structured and readable visuals.
+
+🔁 Dynamic behavior: It adapts automatically to the latest year using earlier logic (see Step 2), while keeping older years and comparison metrics aligned.
+
+✅ Cleaner visuals: You no longer need separate visuals or columns for LY/YoY metrics — all logic is centralized in one measure.
+
+📸 Snapshot
+![p3](https://github.com/user-attachments/assets/ef0b7570-300a-4914-b23b-0bc74813163e)
+
 
 
 
