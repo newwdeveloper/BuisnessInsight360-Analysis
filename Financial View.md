@@ -347,4 +347,53 @@ Enables comparison of performance across business segments.
 📸 Snapshot
 ![p-6-1](https://github.com/user-attachments/assets/3eae00f7-4dcf-4102-b8de-d2f46285c626)
 
+**Step 7:✅  Modified Formula:**
+
+dax
+
+P&L Columns = 
+VAR x = ALLNOBLANKROW('Actual_fiscal-year'[fy_desc])
+RETURN
+UNION(
+    ROW("Col Header", "LY"),
+    ROW("Col Header", "YoY"),
+    ROW("Col Header", "YoY %"),
+    x
+)
+🛠 What Was Modified:
+Earlier, you were using this:
+
+dax
+
+ALLNOBLANKROW('Actual_fiscal-year'[fiscal_year])
+You changed it to:
+
+dax
+
+ALLNOBLANKROW('Actual_fiscal-year'[fy_desc])
+🧠 Why This Change Was Needed:
+You have two types of years:
+
+Actual years (e.g., 2018, 2019, 2020, 2021)
+
+Estimated year (2022 Est) — renamed using this calculated column:
+
+dax
+
+fy_desc = 
+VAR MaxFY = MAX('Actual_fiscal-year'[fiscal_year])
+RETURN IF('Actual_fiscal-year'[fiscal_year] = MaxFY, MaxFY & " Est", 'Actual_fiscal-year'[fiscal_year])
+If you use only fiscal_year, it will return plain values like 2022, not the renamed "2022 Est".
+
+By switching to fy_desc, you include:
+
+All past years as-is
+
+The latest year with “Est” added (like "2022 Est")
+
+This is important when you want visuals or slicers to display estimated data with a clear label — users can now easily distinguish between actual and estimated years.
+
+✅ Summary:
+You used [fy_desc] instead of [fiscal_year] so the header “2022 Est” appears correctly in your visual along with the other fixed headers like "LY", "YoY", and "YoY %". This avoids confusion and ensures that estimated data is clearly labeled and displayed properly.
+
 
