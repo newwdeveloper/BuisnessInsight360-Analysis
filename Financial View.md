@@ -1,17 +1,16 @@
-📊 Power BI – Building the Financial View (P&L)
+**📊 Power BI – Building the Financial View (P&L)**
 🔧 Objective
 To build a Profit & Loss (P&L) style financial matrix in Power BI, where key financial metrics like Gross Sales, Pre-Invoice Deduction, and Net Invoice Sales are arranged vertically like a financial statement — using a supporting table, DAX logic, and matrix visuals.
 
-🧱 Step 1: Create the Core P&L Structure
+**🧱 Step 1: Create the Core P&L Structure**
 This step involves preparing the base structure that will support the dynamic P&L view.
 
 🧾  1 Create Supporting Table for P&L Rows
 Manually create a new table named P&L rows using DATATABLE to define each line item and its order:
 
 DAX
-Copy
-Edit
-P&L rows = DATATABLE(
+
+**P&L rows = DATATABLE(
     "P&L Item", STRING,
     "Order", INTEGER,
     {
@@ -19,22 +18,23 @@ P&L rows = DATATABLE(
         {"Pre-Invoice Deduction", 2},
         {"Net Invoice Sales", 3}
     }
-)
+)**
+
 This table acts as a layout blueprint for your P&L view, keeping the KPIs ordered and aligned vertically.
 
 🧮 1.2 Create the Dynamic P&L Measure
 Next, create a DAX measure named P&L values to return different financial values based on the selected row using SWITCH(TRUE()).
 
 DAX
-Copy
-Edit
-P&L values = 
+
+**P&L values = 
 SWITCH(
     TRUE(),
     MAX('P&L rows'[Order]) = 1, [GS ₹],
     MAX('P&L rows'[Order]) = 2, [Pre_Invoice_Deduction ₹],
     MAX('P&L rows'[Order]) = 3, [NIS ₹]
-)
+)**
+
 This measure dynamically pulls:
 
 Gross Sales → [GS ₹]
@@ -62,20 +62,21 @@ Remove subtotals for cleaner layout
 
 snapshot:![finance view](https://github.com/user-attachments/assets/6577eb22-de88-46aa-b362-8fba1ab61eca)
 
-✅ Step 2: Add Time Intelligence and Dynamic Slicer for Actuals
+**✅ Step 2: Add Time Intelligence and Dynamic Slicer for Actuals**
+
 📌 2.1 Calculate Last Year (LY) Values
 You want to compare the current period’s values with the same period from last year.
 
 💡 DAX Formula:
 
 dax
-Copy
-Edit
-LY = 
+
+**LY = 
 CALCULATE(
     [P&L values], 
     SAMEPERIODLASTYEAR(dim_date[date])
-)
+)**
+
 🔍 Explanation:
 
 [P&L values] is your base measure (e.g., Net Sales, Gross Sales).
@@ -90,9 +91,8 @@ To show only those fiscal years where actual data is available.
 💡 DAX Table:
 
 dax
-Copy
-Edit
-Actual_fiscal-year = 
+
+**Actual_fiscal-year = 
 DISTINCT (
     SELECTCOLUMNS (
         FILTER (
@@ -102,7 +102,8 @@ DISTINCT (
         ),
         "fiscal_year", fact_actual_estimate[fiscal_year]
     )
-)
+)**
+
 
 🔍 Explanation:
 
@@ -120,14 +121,13 @@ To show the most recent fiscal year as "2025 Est" or similar.
 💡 Add Column to Actual_fiscal-year Table:
 
 dax
-Copy
-Edit
-fy_desc = 
+
+**fy_desc = 
 VAR MaxFY = MAX('Actual_fiscal-year'[fiscal_year])
 RETURN IF(
     'Actual_fiscal-year'[fiscal_year] = MaxFY,
     MaxFY & " Est",
-    'Actual_fiscal-year'[fiscal_year]
+    'Actual_fiscal-year'[fiscal_year]**
 )
 🔍 Explanation:
 
@@ -158,7 +158,8 @@ Edit
 ![p1](https://github.com/user-attachments/assets/996af952-fe17-489f-9089-54e5117a9e46)
 
 
-✅ Step 3 – Creating YoY Metrics and Dynamic Column Header Table for Final P&L Output
+**✅ Step 3 – Creating YoY Metrics and Dynamic Column Header Table for Final P&L Output**
+
 To enhance flexibility and visibility into year-over-year (YoY) performance, we extended our model by introducing YoY measures and a dynamic table for visual structuring. Here's the breakdown:
 
 🔹 1. YoY and YoY% Change Measures
@@ -216,6 +217,40 @@ SWITCH(
 
 📸 Snapshot
 ![p3](https://github.com/user-attachments/assets/ef0b7570-300a-4914-b23b-0bc74813163e)
+
+
+✅ Step 4: Enable Quarterly Analysis via Custom Fiscal Calendar Slicer
+🔧 Objective:
+To enable quarterly analysis aligned with the organization's fiscal calendar by generating appropriate slicers.
+
+🛠️ Tasks Completed:
+Created a Custom Fiscal Month Column
+Added a calculated column fy_month_number to adjust the standard calendar month to align with the company’s fiscal year, which begins in May (hence the offset of +4 months):
+
+DAX
+
+**fy_month_number = MONTH(DATE(YEAR(dim_date[date]), MONTH(dim_date[date]) + 4, 1))**
+
+Generated Custom Fiscal Quarter Column
+Created a quarter column that calculates the fiscal quarter based on the new fy_month_number:
+
+DAX
+
+**quarter = "Q" & ROUNDUP(dim_date[fy_month_number] / 3, 0)**
+
+Purpose of this Setup:
+
+These columns help build a slicer that supports quarterly views based on fiscal months.
+
+This setup is critical for organizations whose fiscal year does not follow the standard January–December cycle.
+
+Enhances flexibility in visual reports and dashboard filtering.
+
+📸 Snapshot
+
+![p4](https://github.com/user-attachments/assets/2ff0a78a-3adb-4180-8816-0df85c48bc44)
+![p4-1](https://github.com/user-attachments/assets/df266b85-0f6e-4275-b4a4-fabd6658ef32)
+
 
 
 
