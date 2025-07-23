@@ -266,6 +266,66 @@ IF(FYMONTHNUM > dim_date[fy_month_number], "YTD", "YTG")**
 ![p4-2](https://github.com/user-attachments/assets/09efb3df-186a-477b-92d4-58e023ec5e8e)
 
 
+**✅ Step 5 – Built Dynamic P&L Area Chart with Year-on-Year Comparison**
+
+Goal: Create a visual that dynamically reflects selected P&L metrics (like Net Sales, Gross Margin, etc.) over time, allowing users to compare the selected year with the previous year.
+
+🔧 Key Updates:
+Created Dynamic Measure – P&L values
+This measure adjusts based on the selected row from the 'P&L rows' table. If no row is selected, it defaults to Net Sales.
+
+DAX
+
+***P&L values = 
+VAR x = SWITCH(
+    TRUE(),
+    MAX('P&L rows'[Order])=1, [GS ₹]/1000000,
+    MAX('P&L rows'[Order])=2,[Pre_Invoice_Deduction ₹]/1000000,
+    MAX('P&L rows'[Order])=3,[NIS ₹]/1000000,
+    MAX('P&L rows'[Order])=4,[Post_Invoice_Deduction ₹]/1000000,
+    MAX('P&L rows'[Order])=5,[Post_Invoice_Other_Deduction ₹]/1000000,
+    MAX('P&L rows'[Order])=6,[Total_Post_Invoice_Deduction]/1000000,
+    MAX('P&L rows'[Order])=7,[NS ₹]/1000000,
+    MAX('P&L rows'[Order])=8,[Manufacturing_Cost ₹]/1000000,
+    MAX('P&L rows'[Order])=9,[freight_Cost ₹]/1000000,
+    MAX('P&L rows'[Order])=10,[Other_Cost ₹]/1000000,
+    MAX('P&L rows'[Order])=11,[Total_COGS ₹]/1000000,
+    MAX('P&L rows'[Order])=12,[GM ₹]/1000000,
+    MAX('P&L rows'[Order])=13,[GM %]*100,
+    MAX('P&L rows'[Order])=14,[GM/UNIT]
+)
+RETURN
+IF(HASONEVALUE('P&L rows'[Description]), x, [NS ₹]/1000000)***
+
+**Created Dynamic Title for Chart**
+
+Selected P&L row:
+
+DAX
+
+***Selected P&L row = IF(HASONEVALUE('P&L rows'[Description]), SELECTEDVALUE('P&L rows'[Description]), "Net Sales")***
+
+Performance_visual_title:
+
+DAX
+
+***Performance_visual_title = [Selected P&L row] & " Performance Over Time"***
+
+**Chart Enhancements:**
+
+Converted column chart ➝ area chart for smoother trend visualization.
+
+Added Previous Year by dragging P&L LY measure into the chart.
+
+Renamed legend:
+
+P&L values → Selected Year
+
+P&L LY → Selected Year - 1
+
+📸 Snapshot
+![p5-1](https://github.com/user-attachments/assets/9472f47f-a7a5-43a7-8a96-1268907312d4)
+
 
 
 
