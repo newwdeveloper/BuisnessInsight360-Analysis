@@ -396,4 +396,108 @@ This is important when you want visuals or slicers to display estimated data wit
 ✅ Summary:
 You used [fy_desc] instead of [fiscal_year] so the header “2022 Est” appears correctly in your visual along with the other fixed headers like "LY", "YoY", and "YoY %". This avoids confusion and ensures that estimated data is clearly labeled and displayed properly.
 
+**✅ Step 8: Integrated Operational Expense from External Excel Sheet**
+
+🔧 What was done:
+Client provided a separate Excel sheet named operational_expense, containing:
+
+Fiscal Year
+
+Market
+
+Ads Promotions Percentage
+
+Other Operational Expense Percentage
+
+This sheet was loaded into Power BI and used to enhance the main dataset fact_actual_estimate by calculating new cost columns and updating the P&L logic accordingly.
+
+🧮 New Calculated Columns in fact_actual_estimate:
+1. Ads Promotion Expense Calculation:
+
+ads_promotions = 
+VAR res = CALCULATE(
+    MAX(operational_expense[ads_promotions_pct]),
+    RELATEDTABLE(operational_expense)
+)
+RETURN
+res * fact_actual_estimate[net_sales_amount]
+✅ Why used:
+This dynamically fetches the appropriate percentage from the operational_expense table (based on related year/market), then applies it to net sales to compute the actual ad expense.
+
+2. Other Operational Expense Calculation:
+
+other_operational_expense = 
+VAR res = CALCULATE(
+    MAX(operational_expense[other_operational_expense_pct]),
+    RELATEDTABLE(operational_expense)
+)
+RETURN
+res * fact_actual_estimate[net_sales_amount]
+
+✅ Why used:
+Same logic as above, for additional indirect costs (e.g., admin, utilities), based on percentage of net sales.
+
+📏 New Measures Created:
+1. Total Ads Expense Measure:
+
+ads_expense ₹ = SUM(fact_actual_estimate[ads_promotions])
+
+2. Total Other Expense Measure:
+   
+other_operating_expense ₹ = SUM(fact_actual_estimate[other_operational_expense])
+
+3. Total Operational Expense:
+
+operational expense = [ads_expense ₹] + [other_operating_expense ₹]
+
+5. Net Profit Calculation:
+
+Net profit ₹ = [GM ₹] - [operational expense]
+
+6. Net Profit %:
+
+Net Profit % = DIVIDE([Net profit ₹], [NS ₹], 0)
+
+🧾 Updated P&L values Measure to Include New Metrics:
+Integrated new rows for:
+
+Operational Expense (Order = 15)
+
+Net Profit ₹ (Order = 16)
+
+Net Profit % (Order = 17)
+
+dax
+
+**P&L values = 
+VAR x = SWITCH(
+    TRUE(),
+    MAX('P&L rows'[Order]) = 1, [GS ₹]/1000000,
+    MAX('P&L rows'[Order]) = 2, [Pre_Invoice_Deduction ₹]/1000000,
+    MAX('P&L rows'[Order]) = 3, [NIS ₹]/1000000,
+    MAX('P&L rows'[Order]) = 4, [Post_Invoice_Deduction ₹]/1000000,
+    MAX('P&L rows'[Order]) = 5, [Post_Invoice_Other_Deduction ₹]/1000000,
+    MAX('P&L rows'[Order]) = 6, [Total_Post_Invoice_Deduction]/1000000,
+    MAX('P&L rows'[Order]) = 7, [NS ₹]/1000000,
+    MAX('P&L rows'[Order]) = 8, [Manufacturing_Cost ₹]/1000000,
+    MAX('P&L rows'[Order]) = 9, [freight_Cost ₹]/1000000,
+    MAX('P&L rows'[Order]) = 10, [Other_Cost ₹]/1000000,
+    MAX('P&L rows'[Order]) = 11, [Total_COGS ₹]/1000000,
+    MAX('P&L rows'[Order]) = 12, [GM ₹]/1000000,
+    MAX('P&L rows'[Order]) = 13, [GM %]*100,
+    MAX('P&L rows'[Order]) = 14, [GM/UNIT],
+    MAX('P&L rows'[Order]) = 15, [operational expense]/1000000,
+    MAX('P&L rows'[Order]) = 16, [Net profit ₹]/1000000,
+    MAX('P&L rows'[Order]) = 17, [Net Profit %]*100
+)
+RETURN
+IF(HASONEVALUE('P&L rows'[Description]), x, [NS ₹]/1000000)**
+
+✅ Why this change was important:
+This enhancement ensures the Profit & Loss (P&L) view now reflects a more complete financial picture, including marketing and indirect operational costs, along with their effect on net profitability. It allows stakeholders to evaluate not just gross margins but true bottom-line performance in a flexible, year-wise manner.
+
+📸 Snapshot
+
+
+![p-8](https://github.com/user-attachments/assets/2e8146f9-bbf8-4f29-b121-b9af37edf617)
 
