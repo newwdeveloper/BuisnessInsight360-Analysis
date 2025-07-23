@@ -326,7 +326,25 @@ P&L LY → Selected Year - 1
 📸 Snapshot
 ![p5-1](https://github.com/user-attachments/assets/9472f47f-a7a5-43a7-8a96-1268907312d4)
 
+**✅ Step 6 – Created YoY Analysis in Matrix Format**
 
+***Matrix 1:***
 
+Rows: Country
+
+Columns: P&L values and YoY % Change
+
+Helps analyze country-wise financial performance and growth.
+
+***Matrix 2:***
+
+Rows: Segment
+
+Columns: P&L values and YoY % Change
+
+Enables comparison of performance across business segments.
+
+📸 Snapshot
+![p-6-1](https://github.com/user-attachments/assets/3eae00f7-4dcf-4102-b8de-d2f46285c626)
 
 
