@@ -246,10 +246,24 @@ This setup is critical for organizations whose fiscal year does not follow the s
 
 Enhances flexibility in visual reports and dashboard filtering.
 
+ **Create YTD/YTG Column**
+Add this column to classify each month as YTD or YTG based on latest sales month:
+
+DAX
+
+**YTD-YTG = 
+var LASTSALESMONTH = MAX(fact_sales_monthly[date]) 
+var FYMONTHNUM = MONTH(DATE(YEAR(LASTSALESMONTH), MONTH(LASTSALESMONTH) + 4, 1)) 
+RETURN 
+IF(FYMONTHNUM > dim_date[fy_month_number], "YTD", "YTG")**
+
+✅ Note: This logic aligns the fiscal calendar and enables dynamic slicing for performance tracking across YTD and YTG ranges.
+
 📸 Snapshot
 
 ![p4](https://github.com/user-attachments/assets/2ff0a78a-3adb-4180-8816-0df85c48bc44)
 ![p4-1](https://github.com/user-attachments/assets/df266b85-0f6e-4275-b4a4-fabd6658ef32)
+![p4-2](https://github.com/user-attachments/assets/09efb3df-186a-477b-92d4-58e023ec5e8e)
 
 
 
