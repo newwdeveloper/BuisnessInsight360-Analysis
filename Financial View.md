@@ -501,3 +501,15 @@ This enhancement ensures the Profit & Loss (P&L) view now reflects a more comple
 
 ![p-8](https://github.com/user-attachments/assets/2e8146f9-bbf8-4f29-b121-b9af37edf617)
 
+
+📘 Power BI P&L Report – Executive Summary
+This Power BI report presents a dynamic and detailed Profit & Loss (P&L) analysis, structured to mimic traditional financial statements while offering powerful interactive and time-intelligent capabilities. The foundation is built on a manually created supporting table listing key P&L metrics (e.g., Gross Sales, Net Sales, Net Profit), organized row-wise using DAX logic and a matrix visual. This core setup allows financial values to be calculated dynamically per metric using a central SWITCH-based measure.
+
+To enable year-wise comparisons, additional time intelligence features were implemented, including Last Year (LY), Year-over-Year (YoY), and YoY % metrics. A dynamic column header table allows these comparisons to be displayed alongside actual fiscal years in a unified matrix. The use of a custom fy_desc column ensures proper labeling of estimated years (e.g., "2025 Est"), enhancing clarity in visuals and slicers.
+
+The model also integrates fiscal calendar logic, with calculated fiscal month and quarter fields aligned to a May–April fiscal year. These enable quarterly and YTD/YTG views. A dynamic area chart was added for trend analysis, automatically adjusting based on selected P&L rows and comparing current vs. previous year values.
+
+To extend financial accuracy, the model incorporates external operational expense data (e.g., ad spend and other overheads) from an Excel file. New measures calculate these expenses as percentages of net sales, updating the P&L logic to reflect operational costs and net profit. These enhancements ensure the P&L statement offers a full view of profitability, from gross margin to final bottom line.
+
+In summary, this report transforms static financial data into a flexible, dynamic, and fully interactive financial dashboard, empowering users to analyze fiscal performance by year, metric, segment, or country — while distinguishing actual vs. estimated outcomes and incorporating key cost drivers.
+
