@@ -85,8 +85,8 @@ Page navigation buttons, KPI indicators, trend tooltips, filters for regions/pro
 ## 📂 Resources
 - **Course:** [Codebasics Power BI Data Analytics Course](#)
 - **YouTube Demo:** [Business Insights 360 Dashboard Presentation](#)
-- **Data Files:** Included in repository (e.g., Excel datasets for sales, products, forecasts).
-- **Live Dashboard:** *(Add Power BI Service link here if available)*
+
+- **Live Dashboard:** *[https://app.powerbi.com/reportEmbed?reportId=7275198f-b1d5-4c38-a14f-15703765e514&autoAuth=true&ctid=c6e549b3-5f45-4032-aae9-d4244dc5b2c4]*
 
 ---
 
